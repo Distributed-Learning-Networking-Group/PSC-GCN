@@ -26,7 +26,7 @@ def main(args):
     if rank == 0:
         os.makedirs('checkpoint/', exist_ok=True)
         os.makedirs('results/', exist_ok=True)
-    part = create_inner_graph(g.clone(), node_dict)  #创建inner graph ->part
+    part = create_inner_graph(g.clone(), node_dict) 
     num_in = node_dict['inner_node'].bool().sum().item()
     part.ndata.clear()
     part.edata.clear()
@@ -119,7 +119,6 @@ def main(args):
         # t1 = time.time()
         # sample thread
         t0 = time.time()
-        # add at 7.24 在这个地方可以异步以model异步单位
         if args.use_async == True:
             tc = time.time()
             ctx.buffer.wait()
@@ -128,7 +127,6 @@ def main(args):
         if sample_thread is not None:
             sample_thread.wait()
             sg, in_deg = sample_thread.get()
-            # # add at 7.24 在这个地方可以保证无采样异步时能够保证以layer为异步单位
             # if args.use_async == True:
             #     tc = time.time()
             #     ctx.buffer.wait()

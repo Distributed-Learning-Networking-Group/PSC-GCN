@@ -281,7 +281,7 @@ class Buffer(object):
             self._buff[step].get_f_cuda_event(layer).record(self._comm_stream[step])
         else:
             raise NotImplementedError
-        self.__feat_fusion(layer, self._step)
+        self.__feat_fusion(layer, step)
         self._buff[step].get_f_cpu_event(layer).set() # Event.wait() will not block
         #add at 7.24
         self._buff[step].update_f_event[layer].set()

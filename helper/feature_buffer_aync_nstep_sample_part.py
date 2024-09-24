@@ -71,7 +71,10 @@ class Buffer(object):
         self._backend = backend
         if use_sample:
             self.sample_matrix = torch.zeros([graph.num_edges()],device='cuda') + self._sample_rate
-            self.sample_matrix_temp = torch.zeros([graph.num_edges()],device='cuda') + self._sample_rate
+            if self._sample_method == 'ext':
+                self.sample_matrix = self._com_sample_p(graph)
+            if self._sample_method == 'vr':
+                self.sample_matrix_temp = torch.zeros([graph.num_edges()],device='cuda') + self._sample_rate
         # stream
         for i in range(stale_t):
             self._comm_stream.append(torch.cuda.Stream())
@@ -108,15 +111,15 @@ class Buffer(object):
                 self._pool = ThreadPool(processes=2*self._n_layers*self._stale_t)
         else:
             self._buff.append(Buff_Unit(self._send_shape, self._recv_shape, self._n_layers, self._layer_size, rank, size, backend, use_sample=use_sample, use_cache=use_cache, cache=self.cache))
-  
+    @torch.no_grad()
+    def com_sample_p(self, graph):
+        pass
     @torch.no_grad()
     def sampleMatrixUpdate(self, graph, feat):
         t0 = time.time()
-        for i in range(1,self._n_layers-1):
-            if i == 1:
-                y_ij = torch.norm(self._embed_buf[1], p=2, dim=1) 
-            else:
-                y_ij = y_ij + torch.norm(self._embed_buf[i], p=2, dim=1)
+        y_ij = torch.norm(self._embed_buf[1], p=2, dim=1) 
+        for i in range(2,self._n_layers-1):
+            y_ij = y_ij + torch.norm(self._embed_buf[i], p=2, dim=1)
         node_id = graph.nodes('_V')
         inner_node = node_id.numel()
         device = node_id.device

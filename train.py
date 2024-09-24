@@ -251,7 +251,7 @@ if __name__ == "__main__":
     parser.add_argument("--use-sample", "--use_sample", action='store_true', help="Whether to use sample ")
     parser.add_argument("--sample-rate", "--sample_rate", type=float, default=1 , help="Sample rate")
     parser.add_argument("--recompute-every", "--recompute_every", type=int, default=100, help="How many epochs to recalculate the sample probability if use sample_method: vr")
-    parser.add_argument("--sample-method", "--sample_method", choices=['random', 'vr', ''], default='random', help="neighbor nodes' sample method cross partitions")
+    parser.add_argument("--sample-method", "--sample_method", choices=['random', 'vr', 'ext'], default='random', help="neighbor nodes' sample method cross partitions")
     # cache
     parser.add_argument("--use-cache", "--use_cache", action='store_true', help="Whether to use cache ")
     parser.add_argument("--cache-rate", "--cache_rate", type=float, default=0.1 , help="Rate of boundary nodes to cache")
